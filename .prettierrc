@@ -1,0 +1,6 @@
+{
+  "trailingComma": "all",
+  "importOrderSortSpecifiers": true,
+  "importOrderCaseInsensitive": true,
+  "printWidth": 80
+}
