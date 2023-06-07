@@ -2,6 +2,10 @@ import React from "react";
 import { useQuery } from "react-query";
 import { fetchPeople, GetPeopleResult } from "./api/fetch-people";
 import debounce from "lodash/debounce";
+import { Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import { Layout } from "./components/layout";
+import { PeopleCard } from "./components/PeopleCard";
+import { Pagination } from "./components/Pagination";
 
 const INITIAL_PAGE_NUMBER = 1;
 const DEBOUNCE_TIMEOUT = 350;
@@ -33,28 +37,56 @@ export const App = () => {
   );
 
   return (
-    <div className="App">
-      <input
-        type={"text"}
-        value={searchQuery}
-        onChange={handleSearchQueryChange}
-      />
-      {isFetching ? (
-        <div>Loading...</div>
-      ) : (
-        <>
-          {data?.results.map((person) => (
-            <div key={person.name}>{person.name}</div>
-          ))}
-          {data?.next && (
-            <button onClick={() => setPage((old) => old + 1)}>Next Page</button>
-          )}
-          {data?.previous && (
-            <button onClick={() => setPage((old) => old - 1)}>Prev Page</button>
-          )}
-          <div>Current Page: {page}</div>
-        </>
-      )}
-    </div>
+    <Layout>
+      <Container>
+        <Row>
+          <Col>
+            <Form.Label>Search for character</Form.Label>
+            <Form.Control
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchQueryChange}
+            />
+            <hr />
+            <Row>
+              <Col>
+                <Pagination
+                  nextPage={data?.next}
+                  previousPage={data?.previous}
+                  onChangePage={setPage}
+                  currentPage={page}
+                />
+              </Col>
+            </Row>
+            <hr />
+            {isLoading ? (
+              <Container>
+                <Row className={"justify-content-md-center"}>
+                  <Col md={"auto"}>
+                    <Spinner animation="border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  </Col>
+                </Row>
+              </Container>
+            ) : (
+              <Container>
+                <Row>
+                  {data?.results.map((people) => (
+                    <Col
+                      md={"auto"}
+                      key={people.name}
+                      className={"justify-content-md-center"}
+                    >
+                      <PeopleCard people={people} />
+                    </Col>
+                  ))}
+                </Row>
+              </Container>
+            )}
+          </Col>
+        </Row>
+      </Container>
+    </Layout>
   );
 };
